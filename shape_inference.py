@@ -43,10 +43,3 @@ def infer_shape(obj, name=""):
         return List[reduce(unify, s, Any)]
     else:
         return type(obj)
-    
-
-
-def test():
-    print(infer_shape(toJsonObj("test.json"), "test"))
-
-test()
