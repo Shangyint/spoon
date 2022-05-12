@@ -13,6 +13,9 @@ def gen_constraint_type(data):
 
 
 def check_type(data, type):
-    # check type
-    # check constraint
+    # TODO check type
+    # write a check function
+    # instantiate with the generated type/class
+
+    # TODO check constraint
     pass

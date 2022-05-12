@@ -10,7 +10,6 @@ from functools import reduce
 # 1. Support row variable unification ?
 # 2. Support labelled top types
 # 3. Set nullable 
-# 4. Instantiate class definition from types
 ############################################################################
 
 # ⊥ in the paper
@@ -108,7 +107,13 @@ def infer_shape(obj, name=""):
         return type(obj)
 
 
-def shape_to_class_def(shape, generated: dict):
+def shape_to_class_def(shape):
+    if typing.get_origin(shape) is list:
+        return _shape_to_class_def(typing.get_args(shape)[0], {})
+    else:
+        return _shape_to_class_def(shape, {})
+
+def _shape_to_class_def(shape, generated: dict):
     indent = " " * 4
     classname = shape.__name__.capitalize()
     classdef = ""
@@ -118,7 +123,7 @@ def shape_to_class_def(shape, generated: dict):
             classdef += f"{indent}{k}: "
             if isnamedtuple(v):
                 if (vname := v.__name__.capitalize()) not in generated:
-                    generated = shape_to_class_def(v, generated)
+                    generated = _shape_to_class_def(v, generated)
                 classdef += vname
             else:
                 # TODO support optional by inspecting v further
