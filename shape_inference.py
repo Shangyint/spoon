@@ -1,5 +1,5 @@
 import json
-from typing import Any, List, Union, NamedTuple
+from typing import Any, List, Set, Union, NamedTuple
 import typing
 from functools import reduce
 
@@ -21,11 +21,12 @@ class Bottom:
 NoneType = type(None)
 
 # Use with caution, might have false positives
-def isnamedtuple(obj) -> bool:
+def isnamedtuple(cls) -> bool:
     return (
-            issubclass(obj, tuple) and
-            hasattr(obj, '_asdict') and
-            hasattr(obj, '_fields')
+            type(cls) is type and
+            issubclass(cls, tuple) and
+            hasattr(cls, '_asdict') and
+            hasattr(cls, '_fields')
     )
 
 def is_nullable(ty):
@@ -50,7 +51,6 @@ def floor_ty(ty):
         return ty
 
 def unify(ft, st):
-    print(f"unifying {ft}, {st}")
     # csh(σ, σ) = σ
     if ft == st:
         return ft
@@ -73,7 +73,7 @@ def unify(ft, st):
     elif is_nullable(ft) or is_nullable(st):
         fft = floor_ty(ft) if is_nullable(ft) else ft
         fst = floor_ty(st) if is_nullable(st) else st
-        return floor_ty(fft, fst)
+        return floor_ty(unify(fft, fst))
     # csh(v {v1: σ1, ..., vn: σn}, v {v1: σ1', ..., vn: σn'})
     #     = v {v1: csh(σ1, σ1'), ..., vn: csh(σn, σn')}
     elif isnamedtuple(ft) and isnamedtuple(st) and ft.__name__ == st.__name__:
@@ -84,7 +84,6 @@ def unify(ft, st):
         for (k, v) in st_dict.items():
             if k not in ts:
                 ts[k] = unify(v, NoneType)
-        print(NamedTuple(ft.__name__, ts.items()).__annotations__)
         return NamedTuple(ft.__name__, ts.items())
     else:
         raise RuntimeError(f"Unify: Unhandled typing relation {ft} and {st}")
@@ -107,3 +106,25 @@ def infer_shape(obj, name=""):
         return List[reduce(unify, s, Bottom)]
     else:
         return type(obj)
+
+
+def shape_to_class_def(shape, generated: dict):
+    indent = " " * 4
+    classname = shape.__name__.capitalize()
+    classdef = ""
+    if isnamedtuple(shape):
+        classdef += f"class {classname}(NamedTuple):\n"
+        for (k, v) in shape.__annotations__.items():
+            classdef += f"{indent}{k}: "
+            if isnamedtuple(v):
+                if (vname := v.__name__.capitalize()) not in generated:
+                    generated = shape_to_class_def(v, generated)
+                classdef += vname
+            else:
+                # TODO support optional by inspecting v further
+                classdef += str(v.__name__) if type(v) is type else str(v)
+            classdef += "\n"
+        generated[classname] = classdef
+        return generated
+    else:
+        raise RuntimeError(f"Unhandled type {shape}")
