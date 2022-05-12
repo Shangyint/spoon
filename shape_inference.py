@@ -9,6 +9,8 @@ from functools import reduce
 # TODO:
 # 1. Support row variable unification ?
 # 2. Support labelled top types
+# 3. Set nullable 
+# 4. Instantiate class definition from types
 ############################################################################
 
 # ⊥ in the paper
@@ -25,11 +27,6 @@ def isnamedtuple(obj) -> bool:
             hasattr(obj, '_asdict') and
             hasattr(obj, '_fields')
     )
-
-
-def toJsonObj(json_file):
-    with open(json_file) as f:
-        return json.load(f)
 
 def is_nullable(ty):
     if typing.get_origin(ty) is Union:
