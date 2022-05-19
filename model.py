@@ -4,19 +4,18 @@ import constraint_expr
 NoneType = type(None)
 
 class Norm_cfg(NamedTuple):
-    constraints: typing.Set[constraint_expr.SymExpr]
     type: str
     requires_grad: bool
+    constraints: typing.Set[constraint_expr.SymExpr] = set()
 
 
 class Init_cfg(NamedTuple):
-    constraints: typing.Set[constraint_expr.SymExpr]
     type: str
     checkpoint: str
+    constraints: typing.Set[constraint_expr.SymExpr] = set()
 
 
 class Backbone(NamedTuple):
-    constraints: typing.Set[constraint_expr.SymExpr]
     type: str
     depth: int
     num_stages: int
@@ -28,46 +27,46 @@ class Backbone(NamedTuple):
     init_cfg: Init_cfg
     strides: typing.Union[typing.List[int], NoneType]
     dilations: typing.Union[typing.List[int], NoneType]
+    constraints: typing.Set[constraint_expr.SymExpr] = set()
 
 
 class Neck(NamedTuple):
-    constraints: typing.Set[constraint_expr.SymExpr]
     type: str
     in_channels: typing.List[int]
     out_channels: int
     num_outs: int
+    constraints: typing.Set[constraint_expr.SymExpr] = set()
 
 
 class Anchor_generator(NamedTuple):
-    constraints: typing.Set[constraint_expr.SymExpr]
     type: str
     scales: typing.List[int]
     ratios: typing.List[float]
     strides: typing.List[int]
+    constraints: typing.Set[constraint_expr.SymExpr] = set()
 
 
 class Bbox_coder(NamedTuple):
-    constraints: typing.Set[constraint_expr.SymExpr]
     type: str
     target_means: typing.List[float]
     target_stds: typing.List[float]
+    constraints: typing.Set[constraint_expr.SymExpr] = set()
 
 
 class Loss_cls(NamedTuple):
-    constraints: typing.Set[constraint_expr.SymExpr]
     type: str
     use_sigmoid: bool
     loss_weight: float
+    constraints: typing.Set[constraint_expr.SymExpr] = set()
 
 
 class Loss_bbox(NamedTuple):
-    constraints: typing.Set[constraint_expr.SymExpr]
     type: str
     loss_weight: float
+    constraints: typing.Set[constraint_expr.SymExpr] = set()
 
 
 class Rpn_head(NamedTuple):
-    constraints: typing.Set[constraint_expr.SymExpr]
     type: str
     in_channels: int
     feat_channels: int
@@ -75,25 +74,25 @@ class Rpn_head(NamedTuple):
     bbox_coder: Bbox_coder
     loss_cls: Loss_cls
     loss_bbox: Loss_bbox
+    constraints: typing.Set[constraint_expr.SymExpr] = set()
 
 
 class Roi_layer(NamedTuple):
-    constraints: typing.Set[constraint_expr.SymExpr]
     type: str
     output_size: int
     sampling_ratio: int
+    constraints: typing.Set[constraint_expr.SymExpr] = set()
 
 
 class Bbox_roi_extractor(NamedTuple):
-    constraints: typing.Set[constraint_expr.SymExpr]
     type: str
     roi_layer: Roi_layer
     out_channels: int
     featmap_strides: typing.List[int]
+    constraints: typing.Set[constraint_expr.SymExpr] = set()
 
 
 class Bbox_head(NamedTuple):
-    constraints: typing.Set[constraint_expr.SymExpr]
     type: str
     in_channels: int
     fc_out_channels: typing.Union[int, NoneType]
@@ -104,10 +103,10 @@ class Bbox_head(NamedTuple):
     loss_cls: Loss_cls
     loss_bbox: Loss_bbox
     with_avg_pool: typing.Union[bool, NoneType]
+    constraints: typing.Set[constraint_expr.SymExpr] = set()
 
 
 class Shared_head(NamedTuple):
-    constraints: typing.Set[constraint_expr.SymExpr]
     type: str
     depth: int
     stage: int
@@ -116,81 +115,81 @@ class Shared_head(NamedTuple):
     style: str
     norm_cfg: Norm_cfg
     norm_eval: bool
+    constraints: typing.Set[constraint_expr.SymExpr] = set()
 
 
 class Roi_head(NamedTuple):
-    constraints: typing.Set[constraint_expr.SymExpr]
     type: str
     bbox_roi_extractor: Bbox_roi_extractor
     bbox_head: Bbox_head
     shared_head: typing.Union[Shared_head, NoneType]
+    constraints: typing.Set[constraint_expr.SymExpr] = set()
 
 
 class Assigner(NamedTuple):
-    constraints: typing.Set[constraint_expr.SymExpr]
     type: str
     pos_iou_thr: float
     neg_iou_thr: float
     min_pos_iou: float
     match_low_quality: bool
     ignore_iof_thr: int
+    constraints: typing.Set[constraint_expr.SymExpr] = set()
 
 
 class Sampler(NamedTuple):
-    constraints: typing.Set[constraint_expr.SymExpr]
     type: str
     num: int
     pos_fraction: float
     neg_pos_ub: int
     add_gt_as_proposals: bool
+    constraints: typing.Set[constraint_expr.SymExpr] = set()
 
 
 class Rpn(NamedTuple):
-    constraints: typing.Set[constraint_expr.SymExpr]
     assigner: Assigner
     sampler: Sampler
     allowed_border: int
     pos_weight: int
     debug: bool
+    constraints: typing.Set[constraint_expr.SymExpr] = set()
 
 
 class Nms(NamedTuple):
-    constraints: typing.Set[constraint_expr.SymExpr]
     type: str
     iou_threshold: float
+    constraints: typing.Set[constraint_expr.SymExpr] = set()
 
 
 class Rpn_proposal(NamedTuple):
-    constraints: typing.Set[constraint_expr.SymExpr]
     nms_pre: int
     max_per_img: int
     nms: Nms
     min_bbox_size: int
+    constraints: typing.Set[constraint_expr.SymExpr] = set()
 
 
 class Rcnn(NamedTuple):
-    constraints: typing.Set[constraint_expr.SymExpr]
     assigner: Assigner
     sampler: Sampler
     pos_weight: int
     debug: bool
+    constraints: typing.Set[constraint_expr.SymExpr] = set()
 
 
 class Train_cfg(NamedTuple):
-    constraints: typing.Set[constraint_expr.SymExpr]
     rpn: Rpn
     rpn_proposal: Rpn_proposal
     rcnn: Rcnn
+    constraints: typing.Set[constraint_expr.SymExpr] = set()
 
 
 class Test_cfg(NamedTuple):
-    constraints: typing.Set[constraint_expr.SymExpr]
     rpn: Rpn
     rcnn: Rcnn
+    constraints: typing.Set[constraint_expr.SymExpr] = set()
 
 
 class Model(NamedTuple):
-    constraints: typing.Set[constraint_expr.SymExpr]
     type: str
     backbone: Backbone
     neck: typing.Union[Neck, NoneType]
@@ -198,4 +197,5 @@ class Model(NamedTuple):
     roi_head: Roi_head
     train_cfg: Train_cfg
     test_cfg: Test_cfg
+    constraints: typing.Set[constraint_expr.SymExpr] = set()
 

@@ -124,6 +124,8 @@ def _shape_to_class_def(shape, generated: dict):
     if isnamedtuple(shape):
         classdef += f"class {classname}(NamedTuple):\n"
         for (k, v) in shape.__annotations__.items():
+            if k == "constraints":
+                continue
             classdef += f"{indent}{k}: "
             if isnamedtuple(v):
                 if (vname := v.__name__.capitalize()) not in generated:
@@ -138,6 +140,7 @@ def _shape_to_class_def(shape, generated: dict):
                 # TODO support optional by inspecting v further
                 classdef += str(v.__name__) if type(v) is type else str(v)
             classdef += "\n"
+        classdef += f"{indent}constraints: typing.Set[constraint_expr.SymExpr] = set()\n"
         generated[classname] = classdef
         return generated
     else:
