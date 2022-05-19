@@ -3,6 +3,8 @@ from typing import Any, List, Set, Union, NamedTuple
 import typing
 from functools import reduce
 
+from constraint_expr import SymExpr
+
 ############################################################################
 # Implementation of Types from data's shape inference algorithm for json
 # https://arxiv.org/pdf/1605.02941.pdf
@@ -91,10 +93,12 @@ def unify(ft, st):
 # TODO: row variable unification ?
 def infer_shape(obj, name=""):
     if type(obj) is dict:
-        ts = []
+        ts = [("constraints", Set[SymExpr])]
         for (k, v) in obj.items():
             ts.append((k, infer_shape(v, k)))
-        return NamedTuple(name, ts)
+        ty = NamedTuple(name, ts)
+        ty.constraints = set()
+        return ty
     elif type(obj) is list or type(obj) is tuple:
         if len(obj) == 0:
             return List[Bottom]
@@ -125,6 +129,11 @@ def _shape_to_class_def(shape, generated: dict):
                 if (vname := v.__name__.capitalize()) not in generated:
                     generated = _shape_to_class_def(v, generated)
                 classdef += vname
+            elif isnamedtuple(floor_ty(v)):
+                concretev = floor_ty(v)
+                if (vname := concretev.__name__.capitalize()) not in generated:
+                    generated = _shape_to_class_def(concretev, generated)
+                classdef += f"typing.Union[{vname}, NoneType]"
             else:
                 # TODO support optional by inspecting v further
                 classdef += str(v.__name__) if type(v) is type else str(v)

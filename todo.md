@@ -1,7 +1,7 @@
 
 
 Done:
-1. Python implementation for Types from Data's shape inference algorithm
+1. Python implementation for Typing from Data's shape inference algorithm
 2. Python class generation from shapes
 3. Constraints wrapper in Python with z3 backend.
 

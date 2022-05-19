@@ -10,6 +10,7 @@ cfg2 = f"{config_path}/{config_file_2}"
 with open("model.py", "w") as model:
     print("""import typing
 from typing import NamedTuple
-
+import constraint_expr
+NoneType = type(None)
 """, file=model)
     print(*shape_to_class_def(infer_shape([cfg_to_dict(cfg)["model"], cfg_to_dict(cfg2)["model"]], "model")).values(), sep="\n\n", file=model)
