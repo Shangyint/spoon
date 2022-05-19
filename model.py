@@ -29,6 +29,15 @@ class Backbone(NamedTuple):
     dilations: typing.Union[typing.List[int], NoneType]
     constraints: typing.Set[constraint_expr.SymExpr] = set()
 
+    def construct_cons(self):
+        constraints = set(
+            constraint_expr.SymExpr.Or(
+                constraint_expr.SymExpr(bool, "==", (self.depth, 18)),
+                constraint_expr.SymExpr(bool, "==", (self.depth, 34))),
+            constraint_expr.SymExpr(bool, "<=", (self.num_stages, 4)),
+            constraint_expr.SymExpr(bool, "<=", (1, self.num_stages)),   
+        )
+        return constraints
 
 class Neck(NamedTuple):
     type: str
@@ -198,4 +207,10 @@ class Model(NamedTuple):
     train_cfg: Train_cfg
     test_cfg: Test_cfg
     constraints: typing.Set[constraint_expr.SymExpr] = set()
+
+    def construct_cons(self):
+        constraints = set(
+            constraint_expr.SymExpr(bool, "==", (self.roi_head.bbox_roi_extractor.out_channels, self.neck.out_channels))
+        )
+        return constraints
 
