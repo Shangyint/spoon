@@ -1,10 +1,10 @@
 # do we want to support list or tuple?
 # ty  ::= int | string | tuple[ty] | list[ty] | none | union[ty, ty] | cty
 ty  ::= int | string | none | union[ty, ty] | cty
-cty ::= {v₁: ty₁, v₂: ty₂, ..., vₙ, tyₙ} × set[Cons]
+cty ::= {v₁: ty₁, v₂: ty₂, ..., vₙ, tyₙ} × set[c]
 v ∈ string
 
-tm  ∈ Value ::= ℤ | v
-e   ∈ Expr  ::= e + e | e - e | e × e | e ÷ e | tm
-c   ∈ Cons  ::= e = e | e <= e | e >= e | e < e | e > e |
-                c ∧ c | c ∨ c | ¬ c | "ite" c e e 
+# This might be too complicated. Need to be easier to start
+e   ∈ Expr  ::= e + e | e - e | e × e | e ÷ e | ℤ | v
+c   ∈ bool  ::= e = e | e <= e | e >= e | e < e | e > e |
+                c ∧ c | c ∨ c | ¬ c | "ite" c e e
