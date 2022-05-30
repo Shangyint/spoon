@@ -2,7 +2,7 @@ from typing import List
 from dataclasses import dataclass
 
 # current AST
-# e   ∈ Expr  ::= e + e | ℤ | v
+# e   ∈ Expr  ::= e + e | v
 # c   ∈ bool  ::= e = e | e >= e | e > e | c ∧ c | c ∨ c
 
 class Expr:
