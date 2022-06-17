@@ -37,9 +37,15 @@ class V(Expr):
     def __hash__(self) -> int:
         return super().__hash__()
 
-# @dataclass
-# class Int(Expr):
-#     i: int
+@dataclass
+class Int(Expr):
+    i: int
+
+    def __str__(self) -> str:
+        return str(self.i)
+
+    def __hash__(self) -> int:
+        return super().__hash__()
 
 @dataclass
 class EqExpr(BExpr):
