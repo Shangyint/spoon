@@ -1,9 +1,11 @@
 from typing import List
 from dataclasses import dataclass
+import z3
 
 # current AST
 # e   ∈ Expr  ::= e + e | v
 # c   ∈ bool  ::= e = e | e >= e | e > e | c ∧ c | c ∨ c
+AVAILABLE_OP = {"eq", "gt", "ge"}
 
 class Expr:
     def __hash__(self) -> int:
@@ -29,16 +31,19 @@ fds = ["dummy1", "dummy2"]
 
 @dataclass
 class V(Expr):
-    fd: str
+    fd: List[str]
 
     def __str__(self) -> str:
-        return self.fd
+        return "_".join(self.fd)
     
     def __hash__(self) -> int:
         return super().__hash__()
+    
+    def toZ3(self):
+        return z3.Int(self.__str__())
 
 @dataclass
-class Int(Expr):
+class IntV(Expr):
     i: int
 
     def __str__(self) -> str:
@@ -46,6 +51,9 @@ class Int(Expr):
 
     def __hash__(self) -> int:
         return super().__hash__()
+
+    def toZ3(self):
+        return z3.IntVal(self.i)
 
 @dataclass
 class EqExpr(BExpr):
@@ -57,6 +65,9 @@ class EqExpr(BExpr):
 
     def __hash__(self) -> int:
         return super().__hash__()
+    
+    def toZ3(self):
+        return self.a.toZ3() == self.b.toZ3()
 
 @dataclass
 class GeExpr(BExpr):
@@ -68,6 +79,9 @@ class GeExpr(BExpr):
 
     def __hash__(self) -> int:
         return super().__hash__()
+    
+    def toZ3(self):
+        return self.a.toZ3() >= self.b.toZ3()
 
 @dataclass
 class GtExpr(BExpr):
@@ -79,6 +93,9 @@ class GtExpr(BExpr):
 
     def __hash__(self) -> int:
         return super().__hash__()
+    
+    def toZ3(self):
+        return self.a.toZ3() > self.b.toZ3()
 
 @dataclass
 class AndExpr(BExpr):
@@ -95,6 +112,9 @@ class OrExpr(BExpr):
     
     def __hash__(self) -> int:
         return super().__hash__()
+    
+    def toZ3(self):
+        return z3.Or(self.a.toZ3(), self.b.toZ3())
 
 @dataclass
 class BoolExpr(BExpr):

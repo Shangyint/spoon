@@ -50,4 +50,4 @@ def gen_all(depth):
             print(bexpr)
             s.add(bexpr)
 
-gen_all(2)
+# gen_all(2)
